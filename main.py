@@ -1,18 +1,42 @@
 import pygame
+import sys
+from config import *
 import library as lb
 #################################################################################
 # creating setup
-pygame.init()
-height, width = 1980, 1080
-screen = pygame.display.set_mode((height, width))
-# fscreen = pygame.display.toggle_fullscreen()
-clock = pygame.time.Clock()
-dt = 0  #  delta time in second since last frame used for independent physics
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((HEIGHT, WIDTH))
+        # fscreen = pygame.display.toggle_fullscreen()
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font('Arial', 32)
+        self.running = True
+        self.dt = 0  # delta time in second since last frame used for independent physics
+    def new(self):
+
+        # new game starts
+        self.playing = True
+
+        self.all_sprites = pygame.sprite.LayeredUpdates() # contains all sprites (walls ,enemies, char, allow to update all at once)
+
+    def update(self):
+
+    def draw(self):
+
+    def main(self):
+
+    def game_over(self):
+
+    def intro_screen(self):
+
+
+
 
 #################################################################################
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-running = True
+
 while running:
     # creating situation when user press X, and quiting game
     for event in pygame.event.get():
