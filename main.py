@@ -15,9 +15,13 @@ class Game:
         # self.font = pygame.font.Font('Arial', 32)
         self.running = True
 
+        self.character_spritesheet = Spritessheet("img/character.png")
+        self.terrain_spritesheet = Spritessheet("img/terrain.png")
+
     def createTileMap(self):
         for i, row in enumerate(tilemap):  # numerating rows
             for j, column in enumerate(row):  # numerating elements inside string
+                Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
@@ -31,7 +35,7 @@ class Game:
         self.all_sprites = pygame.sprite.LayeredUpdates()  # contains all sprites (walls,enem,allow to update allatonce)
         self.blocks = pygame.sprite.LayeredUpdates()  # contains wallls
         self.enemies = pygame.sprite.LayeredUpdates()  # contains enemies
-        self.attaks = pygame.sprite.LayeredUpdates()  # attaks and animations
+        self.attacks = pygame.sprite.LayeredUpdates()  # attaks and animations
 
         self.createTileMap()
 

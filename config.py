@@ -2,8 +2,9 @@ WIDTH, HEIGHT = 480, 640
 TILE_SIZE = 32
 FPS = 60
 
-PLAYER_LAYER = 2  # player will bi above the block so he can stand on it
-BLOCK_LAYER = 1
+PLAYER_LAYER = 3  # player will bi above the block so he can stand on it
+BLOCK_LAYER = 2
+GROUND_LAYER =1
 
 PLAYER_SPEED = 3
 
