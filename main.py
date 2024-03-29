@@ -17,6 +17,7 @@ class Game:
 
         self.character_spritesheet = Spritessheet("img/character.png")
         self.terrain_spritesheet = Spritessheet("img/terrain.png")
+        self.enemy_spritesheet = Spritessheet("img/enemy.png")
 
     def createTileMap(self):
         for i, row in enumerate(tilemap):  # numerating rows
@@ -26,6 +27,8 @@ class Game:
                     Block(self, j, i)
                 if column == "P":
                     Player(self, j, i)
+                if column == "E":
+                    Enemy(self, j, i)
 
 
     def new(self):
