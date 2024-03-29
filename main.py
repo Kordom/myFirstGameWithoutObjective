@@ -14,17 +14,28 @@ class Game:
         self.clock = pygame.time.Clock()
         # self.font = pygame.font.Font('Arial', 32)
         self.running = True
-        # self.dt = 0  # delta time in second since last frame used for independent physics
+
+    def createTileMap(self):
+        for i, row in enumerate(tilemap):  # numerating rows
+            for j, column in enumerate(row):  # numerating elements inside string
+                if column == "B":
+                    Block(self, j, i)
+                if column == "P":
+                    Player(self, j, i)
+
 
     def new(self):
+
         # new game starts
         self.playing = True
-        self.all_sprites = pygame.sprite.LayeredUpdates()  # contains all sprites (walls ,enemies, char, allow to update all at once)
+        self.all_sprites = pygame.sprite.LayeredUpdates()  # contains all sprites (walls,enem,allow to update allatonce)
         self.blocks = pygame.sprite.LayeredUpdates()  # contains wallls
         self.enemies = pygame.sprite.LayeredUpdates()  # contains enemies
         self.attaks = pygame.sprite.LayeredUpdates()  # attaks and animations
 
-        self.player = Player(self, 1, 2)
+        self.createTileMap()
+
+
 
     def events(self):
         # game loop events
@@ -67,49 +78,4 @@ while g.running:
     g.game_over()
 
 pygame.quit()
-# sys.exit() # to exit from python
 
-
-
-
-
-
-
-
-
-
-# #################################################################################
-# player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-#
-#
-# while running:
-#     # creating situation when user press X, and quiting game
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#
-#     screen.fill("black")
-#     # game rendering
-# #################################################################################
-#     # p.char_movement()  # character an his movement keys
-#     # lb.borders(player_pos, height, width)
-#     pygame.draw.circle(screen, "red", player_pos, 40)
-#
-#     keys = pygame.key.get_pressed()
-#     if keys[pygame.K_w]:
-#         player_pos.y -= 300 * dt
-#     if keys[pygame.K_s]:
-#         player_pos.y += 300 * dt
-#     if keys[pygame.K_a]:
-#         player_pos.x -= 300 * dt
-#     if keys[pygame.K_d]:
-#         player_pos.x += 300 * dt
-#
-# #################################################################################
-#     # Screen output
-#
-#     pygame.display.flip()
-#
-#     dt = clock.tick(60) / 1000
-#
-# pygame.quit()
