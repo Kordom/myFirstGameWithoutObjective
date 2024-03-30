@@ -49,6 +49,7 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
     def update(self):
         self.movement()
         self.animate()
+        self.collide_enemy()
 
         self.rect.x += self.change_x  # allow to move hitbox with player
         self.colide_blocks("x")  # added collision for x axis
@@ -61,15 +62,23 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
     def movement(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
+            for sprite in self.game.all_sprites:
+                sprite.rect.y += PLAYER_SPEED
             self.change_y -= PLAYER_SPEED  # y axis starts from top 0
             self.facing = "up"
         if keys[pygame.K_s]:
+            for sprite in self.game.all_sprites:
+                sprite.rect.y -= PLAYER_SPEED
             self.change_y += PLAYER_SPEED
             self.facing = "down"
         if keys[pygame.K_a]:
+            for sprite in self.game.all_sprites:
+                sprite.rect.x += PLAYER_SPEED
             self.change_x -= PLAYER_SPEED  # x axis starts from left 0
             self.facing = "left"
         if keys[pygame.K_d]:
+            for sprite in self.game.all_sprites:
+                sprite.rect.x -= PLAYER_SPEED
             self.change_x += PLAYER_SPEED
             self.facing = "right"
 
@@ -78,8 +87,7 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
             if hits:
                 if self.change_x > 0:
-                    self.rect.x = hits[
-                                      0].rect.left - self.rect.width  # to simplify this character gets on the block and thend
+                    self.rect.x = hits[0].rect.left - self.rect.width  # to simplify this character gets on the block and thend
                     # pushed away by minusing it width
                 if self.change_x < 0:
                     self.rect.x = hits[0].rect.right
@@ -92,7 +100,13 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
                 if self.change_y < 0:
                     self.rect.y = hits[0].rect.bottom
 
+    def collide_enemy(self):
+        hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
+        if hits:
+            self.kill()
+            self.game.playing(False)
     # TODO change character
+
     def animate(self):
         down_animations = [self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height),
                            self.game.character_spritesheet.get_sprite(35, 2, self.width, self.height),
@@ -188,15 +202,12 @@ class Enemy(pygame.sprite.Sprite):
 
     def movement(self):
         if self.facing == "left":
-            self.temp_left += 1
             self.change_x -= ENEMY_SPEED
             self.movement_loop -= 1
             if self.temp_left == 2:
                 self.facing = "up"
-                self.temp_left = 0
             if self.movement_loop <= -self.max_travel_x:
                 self.facing = "right"
-
 
         if self.facing == "right":
             self.change_x += ENEMY_SPEED
@@ -204,17 +215,6 @@ class Enemy(pygame.sprite.Sprite):
             if self.movement_loop >= self.max_travel_x:
                 self.facing = "left"
 
-        if self.facing == "up":
-            self.change_x -= ENEMY_SPEED
-            self.movement_loop -= 1
-            if self.movement_loop >= -self.max_travel_y:
-                self.facing = "down"
-
-        if self.facing == "down":
-            self.change_x += ENEMY_SPEED
-            self.movement_loop += 1
-            if self.movement_loop >= self.max_travel_y:
-                self.facing = "up"
 
     def animate(self):
         down_animations = [self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height),
@@ -268,6 +268,7 @@ class Enemy(pygame.sprite.Sprite):
                     self.animation_loop = 1
 
 
+
 class Block(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -304,3 +305,40 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+
+class Button:
+    def __init__(self,x , y, width, height, fg, bg, content, fontsize):
+        self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", fontsize)
+        self.content = content
+
+        self.x = x
+        self.y = y
+
+        self.width = width
+        self.heigt = height
+
+        self.fg = fg
+        self.bg = bg
+
+
+        self.image = pygame.image.load("img/my/butnbg.png")
+        # self.image.fill(self.bg)
+        self.rect = self.image.get_rect()
+
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.text = self.font.render(self.content, True, self.fg)
+        self.text_rect = self.text.get_rect(center=(self.width/2, self.heigt/2))
+        self.image.blit(self.text, self.text_rect)
+        self.image.set_colorkey("black")
+
+    def is_pressed(self,pos, pressed):
+        if self.rect.collidepoint(pos):
+            if pressed[0]:
+                return True
+            return False
+        return False
+
+

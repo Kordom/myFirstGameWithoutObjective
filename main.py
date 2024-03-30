@@ -18,6 +18,9 @@ class Game:
         self.character_spritesheet = Spritessheet("img/character.png")
         self.terrain_spritesheet = Spritessheet("img/terrain.png")
         self.enemy_spritesheet = Spritessheet("img/enemy.png")
+        self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf",60)
+        self.intro_background = pygame.image.load("img/my/bg.png")
+        # self.button_bg = pygame.image.load("img/my/butnbg.png")
 
     def createTileMap(self):
         for i, row in enumerate(tilemap):  # numerating rows
@@ -40,7 +43,7 @@ class Game:
         self.enemies = pygame.sprite.LayeredUpdates()  # contains enemies
         self.attacks = pygame.sprite.LayeredUpdates()  # attaks and animations
 
-        self.createTileMap()
+        self.createTileMap()  #map creation
 
 
 
@@ -74,8 +77,28 @@ class Game:
         pass
 
     def intro_screen(self):
-        pass
+        intro = True
 
+        title = self.font.render('Black Whisper',True, "black")
+        title_rect = title.get_rect(x=250, y=200)
+
+        play_button = Button(350,800,400,60,"white","black" , content_,50)
+
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    intro = False
+                    self.running = False
+            mouse_pos = pygame.mouse.get_pos()  # gets position of mouse on the screen
+            mouse_pressed = pygame.mouse.get_pressed()
+            if play_button.is_pressed(mouse_pos, mouse_pressed):
+                intro = False
+            self.screen.blit(self.intro_background, (0,0))
+            self.screen.blit(title, title_rect)
+            self.screen.blit(play_button.image, play_button.rect)
+            self.clock.tick(FPS)
+            pygame.display.update()
 
 g = Game()
 g.intro_screen()
