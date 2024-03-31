@@ -15,7 +15,7 @@ class Game:
         # self.font = pygame.font.Font('Arial', 32)
         self.running = True
 
-        self.character_spritesheet = Spritessheet("img/character.png")
+        self.character_spritesheet = Spritessheet("pirate/char.png")
         self.terrain_spritesheet = Spritessheet("img/terrain.png")
         self.enemy_spritesheet = Spritessheet("img/enemy.png")
         self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", 60)
@@ -63,6 +63,7 @@ class Game:
                     Attack(self, (self.player.rect.x - TILE_SIZE), self.player.rect.y)
                 if self.player.facing == "right":
                     Attack(self, (self.player.rect.x + TILE_SIZE), self.player.rect.y)
+
     def update(self):
         # game loop updates
         self.all_sprites.update()  # special method that will update all sprites
