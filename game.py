@@ -72,6 +72,7 @@ class Game:
 
     def events(self):
         # game loop events
+        attack = Attack(self, self.player.rect.x,self.player.rect.y)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False

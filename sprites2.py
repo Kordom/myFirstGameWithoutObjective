@@ -232,10 +232,10 @@ class Attack(pygame.sprite.Sprite):
         self.height = TILE_SIZE
 
         self.animation_loop = 0
-        # self.attack_animation_loop_up = 9
-        # self.attack_animation_loop_down = 3
-        # self.attack_animation_loop_left = 6
-        # self.attack_animation_loop_right = 1
+        self.attack_animation_loop_up = 9
+        self.attack_animation_loop_down = 3
+        self.attack_animation_loop_left = 6
+        self.attack_animation_loop_right = 1
 
 
         self.image = self.game.attack_spritesheet.get_sprite(0, 0, self.width, self.height)
@@ -245,19 +245,18 @@ class Attack(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        # self.attack_animations = [self.game.attack_spritesheet.get_sprite(336, 65, self.width, self.height),  # right
-        #                           self.game.attack_spritesheet.get_sprite(367, 67, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(402, 65, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(335, 0, self.width, self.height),  # down
-        #                           self.game.attack_spritesheet.get_sprite(367, 0, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(400, 0, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(334, 98, self.width, self.height),  # left
-        #                           self.game.attack_spritesheet.get_sprite(367, 100, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(406, 98, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(335, 33, self.width, self.height),  # up
-        #                           self.game.attack_spritesheet.get_sprite(367, 33, self.width, self.height),
-        #                           self.game.attack_spritesheet.get_sprite(400, 33, self.width, self.height),
-        #                           ]
+        self.attack_animations = [self.game.attack_spritesheet.get_sprite(336, 65, self.width, self.height),  # right
+                                  self.game.attack_spritesheet.get_sprite(367, 67, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(402, 65, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(335, 0, self.width, self.height),  # down
+                                  self.game.attack_spritesheet.get_sprite(367, 0, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(400, 0, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(334, 98, self.width, self.height),  # left
+                                  self.game.attack_spritesheet.get_sprite(367, 100, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(406, 98, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(335, 33, self.width, self.height),  # up
+                                  self.game.attack_spritesheet.get_sprite(367, 33, self.width, self.height),
+                                  self.game.attack_spritesheet.get_sprite(400, 33, self.width, self.height)]
 
         self.right_animations = [
                             self.game.attack_spritesheet.get_sprite(0, 64, self.width, self.height),
@@ -312,6 +311,29 @@ class Attack(pygame.sprite.Sprite):
             self.animation_loop += 0.5
             if self.animation_loop >= 5:
                 self.kill()
+
+    # def animate_att(self):
+    #     direction = self.game.player.facing
+    #     if direction == "up":
+    #         self.image = self.up_animations[math.floor(self.animation_loop)]
+    #         self.animation_loop += 0.5
+    #         if self.animation_loop >= 5:
+    #             self.kill()
+    #     if direction == "down":
+    #         self.image = self.down_animations[math.floor(self.animation_loop)]
+    #         self.animation_loop += 0.5
+    #         if self.animation_loop >= 5:
+    #             self.kill()
+    #     if direction == "left":
+    #         self.image = self.left_animations[math.floor(self.animation_loop)]
+    #         self.animation_loop += 0.5
+    #         if self.animation_loop >= 5:
+    #             self.kill()
+    #     if direction == "right":
+    #         self.image = self.attack_animations[math.floor(self.attack_animation_loop_right)]
+    #         self.animation_loop += 0.5
+    #         if self.animation_loop >= 3:
+    #             self.attack_animation_loop_right = 1
 
 class Button:
     def __init__(self, x, y, width, height, fg, bg, content, fontsize):
