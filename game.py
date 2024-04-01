@@ -1,43 +1,59 @@
 import pygame
-import sys
 from config import *
-from sprites import *
+from sprites2 import *
 
 
-#################################################################################
-# creating setup
+class Spritessheet:
+    # for cutting from sheet
+    def __init__(self, file):
+        self.sheet = pygame.image.load(file).convert()
+
+    def get_sprite(self, x, y, width, height):
+        sprite = pygame.Surface([width, height])
+        sprite.blit(self.sheet, (0, 0), (x, y, width, height))  # makes cutout from big image
+        sprite.set_colorkey("black")
+        return sprite
+
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((HEIGHT, WIDTH))
         self.clock = pygame.time.Clock()
         self.running = True
-
+        self.playing = True
+        # self.dt = self.clock.tick(FPS) / 1000  # time delta
+        # self.player_pos = pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2)
         self.character_spritesheet = Spritessheet("pirate/char.png")
-        self.terrain_spritesheet = Spritessheet("img/terrain.png")
+        self.terrain_spritesheet = Spritessheet("img/my/tiles.png")
         self.enemy_spritesheet = Spritessheet("img/enemy.png")
         self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", 60)
         self.intro_background = pygame.image.load("img/my/bg.png")
         self.button_bg = pygame.image.load("img/my/butnbg.png")
         self.game_over_bg = pygame.transform.scale2x(pygame.image.load("img/gameover.png"))
-
+        # self.ship = pygame.transform.scale2x(pygame.image.load("img/my/ship.png"))
+        self.ship2 = Spritessheet("img/my/ship2.png")
         self.attack_spritesheet = Spritessheet("img/attack.png")
+        self.sea = pygame.image.load("img/my/sea.jpg")
+
         self.target = pygame.image.load("img/my/marker.png")
 
+    def background(self):
+        size = pygame.transform.scale(self.intro_background, (1800, 1800))
+        self.screen.blit(size, (0, 0))
 
     def createTileMap(self):
         for i, row in enumerate(tilemap):  # numerating rows
             for j, column in enumerate(row):  # numerating elements inside string
-                Ground(self, j, i)
+                if column =="S":
+                    Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
                     self.player = Player(self, j, i)
-                if column == "E":
-                    Enemy(self, j, i)
+                # if column == "E":
+                #     Enemy(self, j, i)
 
     def new(self):
-
         # new game starts
         self.playing = True
         self.all_sprites = pygame.sprite.LayeredUpdates()  # contains all sprites (walls,enem,allow to update allatonce)
@@ -47,21 +63,19 @@ class Game:
 
         self.createTileMap()  # map creation
 
+    def main(self):
+        # game loop
+        while self.playing:
+            self.events()
+            self.update()
+            self.draw()
+
     def events(self):
         # game loop events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
-            # if event.type == pygame.MOUSEBUTTONUP:
-            #     target = self.target
-            #
-            # if event.type == pygame.MOUSEMOTION:
-            #     mouse_pos = pygame.mouse.get_pos()
-            #     mouse_pos.x = mouse_pos[0]
-            #     mouse_pos.y = mouse_pos[1]
-            #     target = mouse_pos
-
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.player.facing == "up":
                     Attack(self, self.player.rect.x, (self.player.rect.y - TILE_SIZE))
@@ -77,17 +91,11 @@ class Game:
         self.all_sprites.update()  # special method that will update all sprites
 
     def draw(self):
-        self.screen.fill("black")
+        size = pygame.transform.scale(self.sea, (1800, 1800))
+        self.screen.blit(size, (0, 0))
         self.all_sprites.draw(self.screen)  # draw all sprites on the screen
         self.clock.tick(FPS)
         pygame.display.update()
-
-    def main(self):
-        # game loop
-        while self.playing:
-            self.events()
-            self.update()
-            self.draw()
 
     def game_over(self):
 
@@ -151,12 +159,14 @@ class Game:
             self.clock.tick(FPS)
             pygame.display.update()
 
-
 g = Game()
 g.intro_screen()
 g.new()
 while g.running:
-    g.main()
-    g.game_over()
 
+    g.events()
+
+    g.main()
+
+    g.game_over()
 pygame.quit()

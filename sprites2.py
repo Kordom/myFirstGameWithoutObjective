@@ -3,20 +3,6 @@ from config import *
 import math
 import random
 
-
-class Spritessheet:
-    # for cutting from sheet
-    def __init__(self, file):
-        self.sheet = pygame.image.load(file).convert()
-
-    def get_sprite(self, x, y, width, height):
-        sprite = pygame.Surface([width, height])
-        sprite.blit(self.sheet, (0, 0), (x, y, width, height))  # makes cutout from big image
-        sprite.set_colorkey("black")
-        return sprite
-
-
-
 class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creating sprites
     def __init__(self, game, x, y):
 
@@ -78,7 +64,6 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
                                ]
 
     def update(self):
-
         self.movement()
         self.animate()
         self.collide_enemy()
@@ -90,9 +75,6 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
 
         self.change_x = 0  # temp
         self.change_y = 0
-
-    def get_center(self):
-        return self.x + self.width/ 2, self.y + self.height/2
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -148,7 +130,6 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
             self.kill()
             self.game.playing = False
 
-
     def animate(self):
         if self.facing == "down":
             if self.change_y == 0:
@@ -200,114 +181,6 @@ class Player(pygame.sprite.Sprite):  # pygame lib. class which helps with creati
                     self.animation_loop = 1
 
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self._layer = ENEMY_LAYER  # to put correctly player on the grass
-        self.groups = self.game.all_sprites, self.game.enemies
-        pygame.sprite.Sprite.__init__(self, self.groups)  # with this move we are adding our self.groups
-        # to already existing Sprite class
-
-        self.x = x * TILE_SIZE  # because its tile based game we need tile size
-        self.y = y * TILE_SIZE
-        self.width = TILE_SIZE
-        self.height = TILE_SIZE
-
-        self.temp_left = 0
-        self.change_x = 0
-        self.change_y = 0
-        self.facing = random.choice(["left", "right"])
-
-        self.animation_loop = 1
-        self.movement_loop = 0
-        self.max_travel_x = random.randint(20, 25)
-        self.max_travel_y = random.randint(10, 20)
-
-        self.image = self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
-        self.image.set_colorkey("black")
-
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
-
-        self.down_animations = [self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height),
-                           self.game.enemy_spritesheet.get_sprite(35, 2, self.width, self.height),
-                           self.game.enemy_spritesheet.get_sprite(68, 2, self.width, self.height)]
-
-        self.up_animations = [self.game.enemy_spritesheet.get_sprite(3, 34, self.width, self.height),
-                         self.game.enemy_spritesheet.get_sprite(35, 34, self.width, self.height),
-                         self.game.enemy_spritesheet.get_sprite(68, 34, self.width, self.height)]
-
-        self.left_animations = [self.game.enemy_spritesheet.get_sprite(3, 98, self.width, self.height),
-                           self.game.enemy_spritesheet.get_sprite(35, 98, self.width, self.height),
-                           self.game.enemy_spritesheet.get_sprite(68, 98, self.width, self.height)]
-
-        self.right_animations = [self.game.enemy_spritesheet.get_sprite(3, 66, self.width, self.height),
-                            self.game.enemy_spritesheet.get_sprite(35, 66, self.width, self.height),
-                            self.game.enemy_spritesheet.get_sprite(68, 66, self.width, self.height)]
-
-    def update(self):
-        self.movement()
-        self.animate()
-
-        self.rect.x += self.change_x
-        self.rect.y += self.change_y
-
-        self.change_x = 0
-        self.change_y = 0
-
-
-    def movement(self):
-        if self.facing == "left":
-            self.change_x -= ENEMY_SPEED
-            self.movement_loop -= 1
-            if self.temp_left == 2:
-                self.facing = "up"
-            if self.movement_loop <= -self.max_travel_x:
-                self.facing = "right"
-
-        if self.facing == "right":
-            self.change_x += ENEMY_SPEED
-            self.movement_loop += 1
-            if self.movement_loop >= self.max_travel_x:
-                self.facing = "left"
-
-    def animate(self):
-        if self.facing == "down":
-            if self.change_y == 0:
-                self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
-            else:
-                self.image = self.down_animations[
-                    math.floor(self.animation_loop)]  # when key is pressed index will grow + 0.1
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:  # what affects in changing the pictures
-                    self.animation_loop = 1
-        if self.facing == "up":
-            if self.change_y == 0:
-                self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
-            else:
-                self.image = self.up_animations[math.floor(self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
-                    self.animation_loop = 1
-        if self.facing == "left":
-            if self.change_x == 0:
-                self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
-            else:
-                self.image = self.left_animations[math.floor(self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
-                    self.animation_loop = 1
-        if self.facing == "right":
-            if self.change_x == 0:
-                self.game.enemy_spritesheet.get_sprite(3, 2, self.width, self.height)
-            else:
-                self.image = self.right_animations[math.floor(self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
-                    self.animation_loop = 1
-
-
 class Block(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -320,8 +193,8 @@ class Block(pygame.sprite.Sprite):
         self.width = TILE_SIZE
         self.height = TILE_SIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(960, 448, self.width, self.height)
-
+        self.image = self.game.terrain_spritesheet.get_sprite(190, 3031, self.width, self.height)
+        self.image.set_colorkey("white")
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
@@ -339,47 +212,11 @@ class Ground(pygame.sprite.Sprite):
         self.width = TILE_SIZE
         self.height = TILE_SIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(64, 352, self.width, self.height)
+        self.image = self.game.ship2.get_sprite(130, 467, 1800, 1800)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-
-
-class Button:
-    def __init__(self, x, y, width, height, fg, bg, content, fontsize):
-        self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", fontsize)
-        self.content = content
-
-        self.x = x
-        self.y = y
-
-        self.width = width
-        self.heigt = height
-
-        self.fg = fg
-        self.bg = bg
-
-        self.image = pygame.Surface((self.width, self.heigt))
-
-        self.image.fill(self.bg)
-        self.rect = self.image.get_rect()
-
-        self.rect.x = self.x
-        self.rect.y = self.y
-
-        self.text = self.font.render(self.content, True, self.fg)
-        self.text_rect = self.text.get_rect(center=(self.width / 2, self.heigt / 2))
-        self.image.blit(self.text, self.text_rect)
-        self.image.set_colorkey("black")
-
-    def is_pressed(self, pos, pressed):
-        if self.rect.collidepoint(pos):
-            if pressed[0]:
-                return True
-            return False
-        return False
-
 
 class Attack(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -476,9 +313,36 @@ class Attack(pygame.sprite.Sprite):
             if self.animation_loop >= 5:
                 self.kill()
 
+class Button:
+    def __init__(self, x, y, width, height, fg, bg, content, fontsize):
+        self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", fontsize)
+        self.content = content
 
+        self.x = x
+        self.y = y
 
-class Mouse:
-    def __init__(self,mousepos):
-        self.mousepos = mousepos
+        self.width = width
+        self.heigt = height
 
+        self.fg = fg
+        self.bg = bg
+
+        self.image = pygame.Surface((self.width, self.heigt))
+
+        self.image.fill(self.bg)
+        self.rect = self.image.get_rect()
+
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.text = self.font.render(self.content, True, self.fg)
+        self.text_rect = self.text.get_rect(center=(self.width / 2, self.heigt / 2))
+        self.image.blit(self.text, self.text_rect)
+        self.image.set_colorkey("black")
+
+    def is_pressed(self, pos, pressed):
+        if self.rect.collidepoint(pos):
+            if pressed[0]:
+                return True
+            return False
+        return False
