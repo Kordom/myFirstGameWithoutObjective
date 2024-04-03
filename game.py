@@ -1,4 +1,5 @@
 import pygame
+
 from config import *
 from sprites2 import *
 
@@ -14,6 +15,7 @@ class Spritessheet:
         sprite.set_colorkey("black")
         return sprite
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -21,20 +23,18 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         self.playing = True
-        # self.dt = self.clock.tick(FPS) / 1000  # time delta
-        # self.player_pos = pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2)
-        self.character_spritesheet = Spritessheet("pirate/char.png")
+
+        self.character_spritesheet = Spritessheet("img/my/char.png")
         self.terrain_spritesheet = Spritessheet("img/my/tiles.png")
         self.enemy_spritesheet = Spritessheet("img/enemy.png")
         self.font = pygame.font.Font("img/CookieCrisp-L36ly.ttf", 60)
         self.intro_background = pygame.image.load("img/my/bg.png")
         self.button_bg = pygame.image.load("img/my/butnbg.png")
         self.game_over_bg = pygame.transform.scale2x(pygame.image.load("img/gameover.png"))
-        # self.ship = pygame.transform.scale2x(pygame.image.load("img/my/ship.png"))
         self.ship2 = Spritessheet("img/my/ship2.png")
         self.attack_spritesheet = Spritessheet("img/attack.png")
         self.sea = pygame.image.load("img/my/sea.jpg")
-
+        self.bullet_spritesheet = Spritessheet("img/my/char.png")
         self.target = pygame.image.load("img/my/marker.png")
 
     def background(self):
@@ -44,14 +44,14 @@ class Game:
     def createTileMap(self):
         for i, row in enumerate(tilemap):  # numerating rows
             for j, column in enumerate(row):  # numerating elements inside string
-                if column =="S":
+                if column == "S":
                     Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
                     self.player = Player(self, j, i)
-                # if column == "E":
-                #     Enemy(self, j, i)
+                if column == "E":
+                    Enemy(self, j, i)
 
     def new(self):
         # new game starts
@@ -60,6 +60,7 @@ class Game:
         self.blocks = pygame.sprite.LayeredUpdates()  # contains wallls
         self.enemies = pygame.sprite.LayeredUpdates()  # contains enemies
         self.attacks = pygame.sprite.LayeredUpdates()  # attaks and animations
+        self.bullets = pygame.sprite.LayeredUpdates()  # bullets
 
         self.createTileMap()  # map creation
 
@@ -72,7 +73,6 @@ class Game:
 
     def events(self):
         # game loop events
-        attack = Attack(self, self.player.rect.x,self.player.rect.y)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
@@ -86,6 +86,17 @@ class Game:
                     Attack(self, (self.player.rect.x - TILE_SIZE), self.player.rect.y)
                 if self.player.facing == "right":
                     Attack(self, (self.player.rect.x + TILE_SIZE), self.player.rect.y)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.player.facing == "up":
+                Bullet(self, self.player.rect.x, self.player.rect.y, )
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.player.facing == "down":
+                Bullet(self, self.player.rect.x, self.player.rect.y, )
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.player.facing == "left":
+                Bullet(self, self.player.rect.x, self.player.rect.y, )
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.player.facing == "right":
+                Bullet(self, self.player.rect.x, self.player.rect.y, )
 
     def update(self):
         # game loop updates
@@ -101,10 +112,10 @@ class Game:
     def game_over(self):
 
         text = self.font.render("No, no, no i think my story was different ", True, "White")
-        text_rect = text.get_rect(center=(WIDTH/2, HEIGHT/2))
+        text_rect = text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
 
         restart_button = Button(20, 710, 430, 135, "white", "black", "Again", 32)
-        quit_button = Button(20, 860, 430, 135,"white", "black", "Tired of listening", 32)
+        quit_button = Button(20, 860, 430, 135, "white", "black", "Tired of listening", 32)
 
         for sprite in self.all_sprites:
             sprite.kill()
@@ -113,7 +124,6 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
 
             mouse_pos = pygame.mouse.get_pos()
             mouse_pressed = pygame.mouse.get_pressed()
@@ -131,7 +141,6 @@ class Game:
             self.screen.blit(self.button_bg, (20, 530))
             self.screen.blit(restart_button.image, restart_button.rect)
             self.screen.blit(quit_button.image, quit_button.rect)
-
 
             self.clock.tick(FPS)
             pygame.display.update()
@@ -160,11 +169,11 @@ class Game:
             self.clock.tick(FPS)
             pygame.display.update()
 
+
 g = Game()
 g.intro_screen()
 g.new()
 while g.running:
-
     g.events()
 
     g.main()
